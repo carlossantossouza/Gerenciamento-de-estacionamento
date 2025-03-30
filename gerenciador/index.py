@@ -1,12 +1,14 @@
 from datetime import datetime
 import json
 
+
 class Veiculo:
     def __init__(self, placa, modelo, cor):
         self.placa = placa
         self.modelo = modelo
         self.cor = cor
         self.hora_entrada = datetime.now()
+
 
 class Estacionamento:
     def __init__(self):
@@ -16,23 +18,25 @@ class Estacionamento:
         self.historico = []
 
     def salvar_auditoria(self):
-        with open('auditoria.json', 'w') as file:
+        with open("auditoria.json", "w") as file:
             json.dump(self.historico, file, indent=4, default=str)
 
     def entrada_veiculo(self, veiculo):
         if len(self.vagas_ocupadas) < self.vagas_totais:
             self.vagas_ocupadas.append(veiculo)
-            self.historico.append({
-                'acao': 'Entrada',
-                'placa': veiculo.placa,
-                'modelo': veiculo.modelo,
-                'cor': veiculo.cor,
-                'hora_entrada': veiculo.hora_entrada
-            })
+            self.historico.append(
+                {
+                    "acao": "Entrada",
+                    "placa": veiculo.placa,
+                    "modelo": veiculo.modelo,
+                    "cor": veiculo.cor,
+                    "hora_entrada": veiculo.hora_entrada,
+                }
+            )
             self.salvar_auditoria()
-            print(f'Veículo {veiculo.placa} entrou às {veiculo.hora_entrada}.')
+            print(f"Veículo {veiculo.placa} entrou às {veiculo.hora_entrada}.")
         else:
-            print('Estacionamento cheio.')
+            print("Estacionamento cheio.")
 
     def saida_veiculo(self, placa):
         for veiculo in self.vagas_ocupadas:
@@ -41,25 +45,32 @@ class Estacionamento:
                 duracao = (hora_saida - veiculo.hora_entrada).total_seconds() / 3600
                 valor_a_pagar = round(duracao * self.tarifa_por_hora, 2)
                 self.vagas_ocupadas.remove(veiculo)
-                self.historico.append({
-                    'acao': 'Saída',
-                    'placa': veiculo.placa,
-                    'hora_saida': hora_saida,
-                    'tempo_permanencia': round(duracao, 2),
-                    'valor_pago': valor_a_pagar
-                })
+                self.historico.append(
+                    {
+                        "acao": "Saída",
+                        "placa": veiculo.placa,
+                        "hora_saida": hora_saida,
+                        "tempo_permanencia": round(duracao, 2),
+                        "valor_pago": valor_a_pagar,
+                    }
+                )
                 self.salvar_auditoria()
-                print(f'Veículo {placa} saiu. Tempo: {round(duracao, 2)} horas. Valor a pagar: R$ {valor_a_pagar}')
+                print(
+                    f"Veículo {placa} saiu. Tempo: {round(duracao, 2)} horas. Valor a pagar: R$ {valor_a_pagar}"
+                )
                 return
-        print('Veículo não encontrado.')
+        print("Veículo não encontrado.")
 
     def listar_veiculos(self):
         if self.vagas_ocupadas:
-            print('Veículos estacionados:')
+            print("Veículos estacionados:")
             for veiculo in self.vagas_ocupadas:
-                print(f'Placa: {veiculo.placa}, Modelo: {veiculo.modelo}, Cor: {veiculo.cor}, Entrada: {veiculo.hora_entrada}')
+                print(
+                    f"Placa: {veiculo.placa}, Modelo: {veiculo.modelo}, Cor: {veiculo.cor}, Entrada: {veiculo.hora_entrada}"
+                )
         else:
-            print('Nenhum veículo estacionado.')
+            print("Nenhum veículo estacionado.")
+
 
 if __name__ == "__main__":
     estacionamento = Estacionamento()
